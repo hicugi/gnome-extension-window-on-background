@@ -9,7 +9,7 @@ import * as AltTab from "resource:///org/gnome/shell/ui/altTab.js";
 
 const DELAY = 70;
 
-let hiddneApps = new Set();
+const hiddneApps = new Set();
 let settings;
 let prevWorkspace;
 
@@ -64,17 +64,19 @@ for (const item of functionsToPatch) {
 }
 
 function reset() {
-  hiddneApps = new Set();
-
-  for (const item of functionsToPatch) {
-    const [className, fnName] = item;
-    AltTab[className].prototype[fnName] = item[2];
+  for (const app of hiddneApps) {
+    hiddneApps.delete(app);
   }
 }
 function exit() {
   reset();
   indicator.destroy();
   indicator = null;
+
+  for (const item of functionsToPatch) {
+    const [className, fnName] = item;
+    AltTab[className].prototype[fnName] = item[2];
+  }
 }
 
 function toggleApp(win) {
