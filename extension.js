@@ -7,20 +7,31 @@ import * as PanelMenu from "resource:///org/gnome/shell/ui/panelMenu.js";
 import * as PopupMenu from "resource:///org/gnome/shell/ui/popupMenu.js";
 import * as AltTab from "resource:///org/gnome/shell/ui/altTab.js";
 
+const DELAY = 70;
+
 let hiddneApps = new Set();
 let settings;
+let prevWorkspace;
+
+function getWorkspace() {
+  if (!settings || !settings.get_boolean("current-workspace-only")) {
+    return null;
+  }
+
+  const workspaceManager = global.workspace_manager;
+  return workspaceManager.get_active_workspace();
+}
 
 function getWindows() {
-  let workspace = null;
-
   if (this?._settings !== undefined) {
     settings = this._settings;
   }
 
-  if (settings && settings.get_boolean("current-workspace-only")) {
-    let workspaceManager = global.workspace_manager;
-    workspace = workspaceManager.get_active_workspace();
-  }
+  const workspace = getWorkspace();
+
+  setTimeout(() => {
+    prevWorkspace = workspace;
+  }, DELAY * 2);
 
   const windows = global.display.get_tab_list(
     Meta.TabList.NORMAL_ALL,
@@ -32,10 +43,12 @@ function getWindows() {
 global.display.connect("notify::focus-window", () => {
   setTimeout(() => {
     const windows = getWindows();
+
     if (!windows.length) return;
+    if (prevWorkspace == getWorkspace()) return;
 
     windows[0].activate(global.get_current_time());
-  }, 100);
+  }, DELAY);
 });
 
 const functionsToPatch = [
