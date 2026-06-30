@@ -17,7 +17,7 @@ function getWindows() {
     settings = this._settings;
   }
 
-  if (settings.get_boolean("current-workspace-only")) {
+  if (settings && settings.get_boolean("current-workspace-only")) {
     let workspaceManager = global.workspace_manager;
     workspace = workspaceManager.get_active_workspace();
   }
