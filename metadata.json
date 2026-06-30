@@ -1,0 +1,6 @@
+{
+  "uuid": "window-on-background",
+  "name": "Window on Background",
+  "description": "Customize Alt+Tab ordering and keep selected window outside of focus on switching workplaces",
+  "shell-version": ["46"]
+}
