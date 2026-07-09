@@ -67,6 +67,8 @@ function reset() {
   for (const app of hiddneApps) {
     hiddneApps.delete(app);
   }
+
+  BackgroundLauncherExtension.reset();
 }
 function exit() {
   reset();
@@ -164,6 +166,10 @@ export default class BackgroundLauncherExtension {
     indicator.menu.connect("open-state-changed", (_, open) => {
       if (open) indicator.refresh();
     });
+  }
+  reset() {
+    Main.panel.delete(indicator);
+    this.enable();
   }
 
   disable() {
